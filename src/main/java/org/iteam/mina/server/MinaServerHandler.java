@@ -1,8 +1,11 @@
 package org.iteam.mina.server;
 
+import java.net.InetSocketAddress;
+
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.iteam.mina.pool.SessionPool;
 import org.iteam.mina.utils.EUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +36,17 @@ public class MinaServerHandler extends IoHandlerAdapter {
 
 	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
+		InetSocketAddress address = (InetSocketAddress)session.getRemoteAddress();
 		log.debug(String.format("向Client[%s]发送消息:%s",
-				session.getRemoteAddress(), message.toString()));
+				address.getAddress(), message.toString()));
 	}
 
 	@Override
 	public void sessionClosed(IoSession session) throws Exception {
+		// session创建以后将 session放入静态变量中
+		if (SessionPool.idSessions.containsKey(session.getId())) {
+			SessionPool.idSessions.remove(session.getId());
+		}
 		log.debug(String.format("Client[%s]与Server断开连接!",
 				session.getRemoteAddress()));
 	}

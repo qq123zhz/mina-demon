@@ -2,7 +2,7 @@ package org.iteam.mina.utils;
 
 public class EUtils {
 	public static String getExceptionStack(Throwable e) {
-		e.printStackTrace();
+		// e.printStackTrace();
 		StackTraceElement[] stackTraceElements = e.getStackTrace();
 		String result = e.toString() + "\n";
 		for (int index = stackTraceElements.length - 1; index >= 0; --index) {

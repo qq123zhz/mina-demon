@@ -7,6 +7,7 @@ import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.iteam.mina.protocal.HachiKeepAliveFilterInMina;
 import org.iteam.mina.protocal.JConstant;
 import org.iteam.mina.protocal.JMessageProtocalCodecFactory;
 import org.iteam.mina.protocal.JMessageProtocalRequest;
@@ -28,23 +29,28 @@ public class MainClient {
 
 	public static void main(String[] args) {
 		NioSocketConnector connector = new NioSocketConnector();
+
 		DefaultIoFilterChainBuilder chain = connector.getFilterChain();
+		chain.addLast("keep-alive", new HachiKeepAliveFilterInMina());// 心跳
 		chain.addLast("logger", new LoggingFilter());
 		chain.addLast("codec", new ProtocolCodecFilter(
 				new JMessageProtocalCodecFactory(JConstant.charset)));
 		connector.setHandler(new MinaClientHandler());
 		connector.setConnectTimeoutMillis(3000);
+		connector.getSessionConfig().setReadBufferSize(2048 * 5000);// 发送缓冲区10M
+		connector.getSessionConfig().setReceiveBufferSize(2048 * 5000);// 接收缓冲区10M
 		ConnectFuture cf = connector.connect(new InetSocketAddress(IP, PORT));
 		log.info("等待连接创建完成......");
 		cf.awaitUninterruptibly();// 等待连接创建完成
 		log.info("连接创建完成-->" + IP + ":" + PORT);
 		JMessageProtocalRequest req = new JMessageProtocalRequest();
-		req.setVersion(1000);
+		req.setVersion(1111000);
 		req.setMethodCode(0x00100140);
 		req.setContent("hello world!!!");
 		log.info("发送数据.....");
 		cf.getSession().write(req);
 		log.info("发送数据成功.....等待连接断开");
+
 		cf.getSession().getCloseFuture().awaitUninterruptibly();// 等待连接断开
 		connector.dispose();
 		log.info("连接断开");
