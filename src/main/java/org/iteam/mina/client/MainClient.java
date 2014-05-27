@@ -24,7 +24,7 @@ public class MainClient {
 
 	private static Logger log = LoggerFactory.getLogger(MainClient.class);
 
-	private static final int PORT = 9999;
+	private static final int PORT = JConstant.PORT;
 	private static final String IP = "127.0.0.1";
 
 	public static void main(String[] args) {
@@ -36,9 +36,11 @@ public class MainClient {
 		chain.addLast("codec", new ProtocolCodecFilter(
 				new JMessageProtocalCodecFactory(JConstant.charset)));
 		connector.setHandler(new MinaClientHandler());
-		connector.setConnectTimeoutMillis(3000);
-		connector.getSessionConfig().setReadBufferSize(2048 * 5000);// 发送缓冲区10M
-		connector.getSessionConfig().setReceiveBufferSize(2048 * 5000);// 接收缓冲区10M
+		connector.setConnectTimeoutMillis(JConstant.ConnectTimeoutMillis);
+		connector.getSessionConfig()
+				.setReadBufferSize(JConstant.ReadBufferSize);// 发送缓冲区10M
+		connector.getSessionConfig().setReceiveBufferSize(
+				JConstant.ReceiveBufferSize);// 接收缓冲区10M
 		ConnectFuture cf = connector.connect(new InetSocketAddress(IP, PORT));
 		log.info("等待连接创建完成......");
 		cf.awaitUninterruptibly();// 等待连接创建完成

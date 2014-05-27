@@ -26,8 +26,6 @@ public class MainServer {
 
 	private static Logger log = LoggerFactory.getLogger(MainServer.class);
 
-	private static final int PORT = 9999;
-
 	public static void main(String[] args) throws Exception {
 		SocketAcceptor acceptor = new NioSocketAcceptor(Runtime.getRuntime()
 				.availableProcessors() + 1);// tcp/ip 接收者
@@ -38,11 +36,12 @@ public class MainServer {
 				new JMessageProtocalCodecFactory(JConstant.charset)));
 		chain.addLast("threadPool",
 				new ExecutorFilter(Executors.newCachedThreadPool()));
-		acceptor.getSessionConfig().setReadBufferSize(2048 * 5000);// 发送缓冲区10M
-		acceptor.getSessionConfig().setReceiveBufferSize(2048 * 5000);// 接收缓冲区10M
-		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE, 30);// 读写通道10s内无操作进入空闲状态
+		acceptor.getSessionConfig().setReadBufferSize(JConstant.ReadBufferSize);// 发送缓冲区10M
+		acceptor.getSessionConfig().setReceiveBufferSize(JConstant.ReceiveBufferSize);// 接收缓冲区10M
+		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE,
+				JConstant.IDELTIMEOUT);// 读写通道10s内无操作进入空闲状态
 		acceptor.setHandler(new MinaServerHandler());// 设置handler
-		acceptor.bind(new InetSocketAddress(PORT));// 设置端口
-		log.debug(String.format("Server Listing on %s", PORT));
+		acceptor.bind(new InetSocketAddress(JConstant.PORT));// 设置端口
+		log.debug(String.format("Server Listing on %s", JConstant.PORT));
 	}
 }
