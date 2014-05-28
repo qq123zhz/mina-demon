@@ -7,11 +7,8 @@ import org.apache.mina.filter.keepalive.KeepAliveFilter;
 import org.apache.mina.filter.keepalive.KeepAliveMessageFactory;
 import org.apache.mina.filter.keepalive.KeepAliveRequestTimeoutHandler;
 import org.iteam.mina.utils.JConstant;
-import org.iteam.mina.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import redis.clients.jedis.Jedis;
 
 /**
  * mina 心跳检测
@@ -48,8 +45,6 @@ class ExceptionHandler implements KeepAliveRequestTimeoutHandler {
 			IoSession session) throws Exception {
 		// System.out.println("Connection lost, session will be closed");
 		logger.debug("连接丢失，会话将关闭");
-		Jedis jedis = RedisUtil.getResource();
-		jedis.del(String.valueOf("session_id:" + session.getId()));
 		session.close(true);
 	}
 }
