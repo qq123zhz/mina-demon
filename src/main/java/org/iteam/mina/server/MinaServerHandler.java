@@ -30,6 +30,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		log.error(EUtils.getExceptionStack(cause));
 		Jedis jedis = RedisUtil.getResource();
 		jedis.del(String.valueOf("session_id:" + session.getId()));
+		RedisUtil.returnResource(jedis);
 	}
 
 	@Override
@@ -55,6 +56,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		}
 		Jedis jedis = RedisUtil.getResource();
 		jedis.del(String.valueOf("session_id:" + session.getId()));
+		RedisUtil.returnResource(jedis);
+
 		log.debug(String.format("Client[%s]与Server断开连接!" + session.getId(),
 				session.getRemoteAddress()));
 	}
@@ -64,6 +67,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		Jedis jedis = RedisUtil.getResource();
 		jedis.setex(String.valueOf("session_id:" + session.getId()), 30,
 				session.getRemoteAddress().toString());
+		RedisUtil.returnResource(jedis);
+
 		log.debug(String.format("Client[%s]与Server建立连接!",
 				session.getRemoteAddress()));
 	}

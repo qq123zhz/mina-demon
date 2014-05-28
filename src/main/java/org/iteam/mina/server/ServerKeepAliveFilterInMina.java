@@ -108,6 +108,7 @@ class KeepAliveMessageFactoryImpl implements KeepAliveMessageFactory {
 		if (result) {
 			Jedis jedis = RedisUtil.getResource();
 			jedis.expire(String.valueOf("session_id:" + session.getId()), 30);
+			RedisUtil.returnResource(jedis);
 		}
 		return result;
 	}
