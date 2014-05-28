@@ -6,7 +6,7 @@ public interface JConstant {
 	/** 服务器端口 */
 	final int PORT = 9999;
 	/** 15秒发送一次心跳包 */
-	final int KEEP_ALIVE_INTERVAL = 25;// in seconds
+	final int KEEP_ALIVE_INTERVAL = 15;// in seconds
 	/** 10秒心跳包超时时间 */
 	final int KEEP_ALIVE_TIMEOUT = 10; // in seconds
 	/** 30秒后超时 */
