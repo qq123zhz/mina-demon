@@ -6,6 +6,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderAdapter;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
+import org.iteam.mina.utils.ProtocolType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 		if (!canDecode(tempBuf)) {
 			// 协议错误
 			jMessageProtocal = new JMessageProtocal();
-			jMessageProtocal.setResultCode(0x01);
+			jMessageProtocal.setResultCode(ProtocolType.TYPE_REEOR);
 			// return;
 		} else {
 			// 协议体buf
@@ -93,7 +94,7 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 				// 协议错误
 				log.error("未定义的Type");
 				jMessageProtocal = new JMessageProtocal();
-				jMessageProtocal.setResultCode(0x01);
+				jMessageProtocal.setResultCode(ProtocolType.TYPE_REEOR);
 			}
 		}
 		out.write(jMessageProtocal);

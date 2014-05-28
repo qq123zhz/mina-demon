@@ -7,8 +7,11 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.iteam.mina.pool.SessionPool;
 import org.iteam.mina.utils.EUtils;
+import org.iteam.mina.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * MINA 服务器消息处理
@@ -25,6 +28,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 			throws Exception {
 		log.error(String.format("Server产生异常!"));
 		log.error(EUtils.getExceptionStack(cause));
+		Jedis jedis = RedisUtil.getResource();
+		jedis.del(String.valueOf("session_id:" + session.getId()));
 	}
 
 	@Override
@@ -48,12 +53,17 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		if (SessionPool.idSessions.containsKey(session.getId())) {
 			SessionPool.idSessions.remove(session.getId());
 		}
-		log.debug(String.format("Client[%s]与Server断开连接!"+session.getId(),
+		Jedis jedis = RedisUtil.getResource();
+		jedis.del(String.valueOf("session_id:" + session.getId()));
+		log.debug(String.format("Client[%s]与Server断开连接!" + session.getId(),
 				session.getRemoteAddress()));
 	}
 
 	@Override
 	public void sessionCreated(IoSession session) throws Exception {
+		Jedis jedis = RedisUtil.getResource();
+		jedis.setex(String.valueOf("session_id:" + session.getId()), 30,
+				session.getRemoteAddress().toString());
 		log.debug(String.format("Client[%s]与Server建立连接!",
 				session.getRemoteAddress()));
 	}
