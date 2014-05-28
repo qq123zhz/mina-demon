@@ -4,13 +4,18 @@ public class EUtils {
 	public static String getExceptionStack(Throwable e) {
 		// e.printStackTrace();
 		StackTraceElement[] stackTraceElements = e.getStackTrace();
-		String result = e.toString() + "\n";
+		StringBuffer result = new StringBuffer(e.toString() + "\n");
 		for (int index = stackTraceElements.length - 1; index >= 0; --index) {
-			result += "at [" + stackTraceElements[index].getClassName() + ",";
-			result += stackTraceElements[index].getFileName() + ",";
-			result += stackTraceElements[index].getMethodName() + ",";
-			result += stackTraceElements[index].getLineNumber() + "]\n";
+			result.append("at [" + stackTraceElements[index].getClassName());
+			result.append(",\t");
+			result.append(stackTraceElements[index].getFileName());
+			result.append(",\t");
+			result.append(stackTraceElements[index].getMethodName());
+			result.append(",\t");
+			result.append(stackTraceElements[index].getLineNumber());
+			result.append(",\t");
+			result.append(stackTraceElements[index].getFileName() + "]\n");
 		}
-		return result;
+		return result.toString();
 	}
 }
