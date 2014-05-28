@@ -1,4 +1,4 @@
-package org.iteam.mina.protocal;
+package org.iteam.mina.server;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IdleStatus;
@@ -19,20 +19,20 @@ import redis.clients.jedis.Jedis;
  * @author arts
  * 
  */
-public class HachiKeepAliveFilterInMina extends KeepAliveFilter {
-	private static final int INTERVAL = JConstant.KEEP_ALIVE_INTERVAL;// in
-																		// seconds
-	private static final int TIMEOUT = JConstant.KEEP_ALIVE_TIMEOUT; // in
-																		// seconds
+public class ServerKeepAliveFilterInMina extends KeepAliveFilter {
+	private static final int INTERVAL = JConstant.KEEP_ALIVE_SERVER_INTERVAL;
+	// in seconds
+	private static final int TIMEOUT = JConstant.KEEP_ALIVE_SERVER_TIMEOUT;
+	// in seconds
 	private Logger logger = LoggerFactory
-			.getLogger(HachiKeepAliveFilterInMina.class);
+			.getLogger(ServerKeepAliveFilterInMina.class);
 
-	public HachiKeepAliveFilterInMina(KeepAliveMessageFactory messageFactory) {
+	public ServerKeepAliveFilterInMina(KeepAliveMessageFactory messageFactory) {
 		super(messageFactory, IdleStatus.BOTH_IDLE, new ExceptionHandler(),
 				INTERVAL, TIMEOUT);
 	}
 
-	public HachiKeepAliveFilterInMina() {
+	public ServerKeepAliveFilterInMina() {
 		super(new KeepAliveMessageFactoryImpl(), IdleStatus.BOTH_IDLE,
 				new ExceptionHandler(), INTERVAL, TIMEOUT);
 		this.setForwardEvent(false); // 此消息不会继续传递，不会被业务层看见
@@ -71,8 +71,6 @@ class KeepAliveMessageFactoryImpl implements KeepAliveMessageFactory {
 			.wrap(new byte[] { int_rep });
 
 	public Object getRequest(IoSession session) {
-		Jedis jedis =RedisUtil.getResource();
-		jedis.expire(String.valueOf("session_id:"+session.getId()), 30);
 		logger.debug("心跳-getRequest,sessionid:" + session.getId());
 		return KAMSG_REQ.duplicate();
 	}
@@ -107,7 +105,10 @@ class KeepAliveMessageFactoryImpl implements KeepAliveMessageFactory {
 		realMessage.rewind();
 		logger.debug("心跳-isResponse,sessionid:" + session.getId() + ",result:"
 				+ result);
-
+		if (result) {
+			Jedis jedis = RedisUtil.getResource();
+			jedis.expire(String.valueOf("session_id:" + session.getId()), 30);
+		}
 		return result;
 	}
 }
