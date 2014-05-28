@@ -47,7 +47,8 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 	@Override
 	protected void append(ILoggingEvent event) {
 		DB db = getDB();
-		DBCollection dc = db.getCollection("log_" + event.getLevel().levelStr.toLowerCase());
+		DBCollection dc = db.getCollection("log_"
+				+ event.getLevel().levelStr.toLowerCase());
 		DBObject jo = new BasicDBObject();
 		jo.put("level", event.getLevel().levelStr);
 		jo.put("threadName", event.getThreadName());

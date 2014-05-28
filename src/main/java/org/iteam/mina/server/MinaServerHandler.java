@@ -16,7 +16,7 @@ import redis.clients.jedis.Jedis;
 /**
  * MINA 服务器消息处理
  * 
- * @author Simple
+ * @author arts
  * 
  */
 public class MinaServerHandler extends IoHandlerAdapter {
@@ -26,7 +26,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause)
 			throws Exception {
-		log.error(String.format("Server产生异常!"));
+		log.error(String.format("[" + session.getRemoteAddress()
+				+ "]Server产生异常!"));
 		log.error(EUtils.getExceptionStack(cause));
 		Jedis jedis = RedisUtil.getResource();
 		jedis.del(String.valueOf("session_id:" + session.getId()));
@@ -76,7 +77,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 	@Override
 	public void sessionIdle(IoSession session, IdleStatus status)
 			throws Exception {
-		log.debug(String.format("Server进入空闲状态!"));
+		log.debug(String.format("[" + session.getRemoteAddress()
+				+ "]Server进入空闲状态!"));
 	}
 
 	@Override
