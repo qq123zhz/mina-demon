@@ -5,6 +5,9 @@ import java.nio.charset.Charset;
 public interface JConstant {
 
 	final int PORT = 9999;
+
+	final int INTERVAL = 15;// in seconds
+	final int TIMEOUT = 10; // in seconds
 	/** 30秒后超时 */
 	final int IDELTIMEOUT = 30;
 	/** 15秒发送一次心跳包 */

@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class HachiKeepAliveFilterInMina extends KeepAliveFilter {
-	private static final int INTERVAL = 20;// in seconds
-	private static final int TIMEOUT = 10; // in seconds
+	private static final int INTERVAL = JConstant.INTERVAL;// in seconds
+	private static final int TIMEOUT = JConstant.TIMEOUT; // in seconds
 	private Logger logger = LoggerFactory
 			.getLogger(HachiKeepAliveFilterInMina.class);
 
