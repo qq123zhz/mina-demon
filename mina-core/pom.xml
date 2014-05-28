@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.iteam</groupId>
-		<artifactId>tpis</artifactId>
+		<artifactId>mina-demo</artifactId>
 		<version>0.0.1</version>
 	</parent>
  	<artifactId>mina-core</artifactId>
