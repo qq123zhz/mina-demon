@@ -25,7 +25,7 @@ public class MainClient {
 	private static Logger log = LoggerFactory.getLogger(MainClient.class);
 
 	private static final int PORT = JConstant.PORT;
-	private static final String IP = "127.0.0.1";
+	private static final String IP = "192.168.12.31";
 
 	public static void main(String[] args) {
 		NioSocketConnector connector = new NioSocketConnector();
@@ -34,13 +34,13 @@ public class MainClient {
 		chain.addLast("keep-alive", new HachiKeepAliveFilterInMina());// 心跳
 		chain.addLast("logger", new LoggingFilter());
 		chain.addLast("codec", new ProtocolCodecFilter(
-				new JMessageProtocalCodecFactory(JConstant.charset)));
+				new JMessageProtocalCodecFactory(JConstant.CHARSET)));
 		connector.setHandler(new MinaClientHandler());
-		connector.setConnectTimeoutMillis(JConstant.ConnectTimeoutMillis);
-		connector.getSessionConfig()
-				.setReadBufferSize(JConstant.ReadBufferSize);// 发送缓冲区10M
+		connector.setConnectTimeoutMillis(JConstant.CONNECT_TIMEOUT_MILLIS);
+		connector.getSessionConfig().setReadBufferSize(
+				JConstant.READ_BUFFER_SIZE);// 发送缓冲区10M
 		connector.getSessionConfig().setReceiveBufferSize(
-				JConstant.ReceiveBufferSize);// 接收缓冲区10M
+				JConstant.RECEIVE_BUFFER_SIZE);// 接收缓冲区10M
 		ConnectFuture cf = connector.connect(new InetSocketAddress(IP, PORT));
 		log.info("等待连接创建完成......");
 		cf.awaitUninterruptibly();// 等待连接创建完成

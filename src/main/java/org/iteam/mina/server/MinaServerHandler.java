@@ -36,9 +36,10 @@ public class MinaServerHandler extends IoHandlerAdapter {
 
 	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
-		InetSocketAddress address = (InetSocketAddress)session.getRemoteAddress();
-		log.debug(String.format("向Client[%s]发送消息:%s",
-				address.getAddress(), message.toString()));
+		InetSocketAddress address = (InetSocketAddress) session
+				.getRemoteAddress();
+		log.debug(String.format("向Client[%s]发送消息:%s", address.getAddress(),
+				message.toString()));
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		if (SessionPool.idSessions.containsKey(session.getId())) {
 			SessionPool.idSessions.remove(session.getId());
 		}
-		log.debug(String.format("Client[%s]与Server断开连接!",
+		log.debug(String.format("Client[%s]与Server断开连接!"+session.getId(),
 				session.getRemoteAddress()));
 	}
 

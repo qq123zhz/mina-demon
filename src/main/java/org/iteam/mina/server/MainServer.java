@@ -33,13 +33,15 @@ public class MainServer {
 		chain.addLast("keep-alive", new HachiKeepAliveFilterInMina());// 心跳
 		chain.addLast("logger", new LoggingFilter());
 		chain.addLast("codec", new ProtocolCodecFilter(
-				new JMessageProtocalCodecFactory(JConstant.charset)));
+				new JMessageProtocalCodecFactory(JConstant.CHARSET)));
 		chain.addLast("threadPool",
 				new ExecutorFilter(Executors.newCachedThreadPool()));
-		acceptor.getSessionConfig().setReadBufferSize(JConstant.ReadBufferSize);// 发送缓冲区10M
-		acceptor.getSessionConfig().setReceiveBufferSize(JConstant.ReceiveBufferSize);// 接收缓冲区10M
+		acceptor.getSessionConfig().setReadBufferSize(
+				JConstant.READ_BUFFER_SIZE);// 发送缓冲区10M
+		acceptor.getSessionConfig().setReceiveBufferSize(
+				JConstant.RECEIVE_BUFFER_SIZE);// 接收缓冲区10M
 		acceptor.getSessionConfig().setIdleTime(IdleStatus.BOTH_IDLE,
-				JConstant.IDELTIMEOUT);// 读写通道10s内无操作进入空闲状态
+				JConstant.IDEL_TIMEOUT);// 读写通道10s内无操作进入空闲状态
 		acceptor.setHandler(new MinaServerHandler());// 设置handler
 		acceptor.bind(new InetSocketAddress(JConstant.PORT));// 设置端口
 		log.debug(String.format("Server Listing on %s", JConstant.PORT));
