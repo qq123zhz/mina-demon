@@ -6,6 +6,8 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.iteam.mina.pool.SessionPool;
+import org.iteam.mina.protocal.JMessageProtocalRequest;
+import org.iteam.mina.protocal.JMessageProtocalResponse;
 import org.iteam.mina.utils.EUtils;
 import org.iteam.mina.utils.RedisUtil;
 import org.slf4j.Logger;
@@ -47,6 +49,19 @@ public class MinaServerHandler extends IoHandlerAdapter {
 				.getRemoteAddress();
 		log.debug(String.format("向Client[%s]发送消息:%s", address.getAddress(),
 				message.toString()));
+		if (message instanceof JMessageProtocalRequest) {
+			JMessageProtocalRequest request = (JMessageProtocalRequest) message;
+			JMessageProtocalResponse response = new JMessageProtocalResponse();
+			response.setContent(request.getContent());
+			response.setMethodCode(request.getMethodCode());
+			response.setResultCode(0x11);
+			response.setVersion(request.getVersion());
+			session.write(response);
+		} else if (message instanceof JMessageProtocalResponse) {
+
+		} else {
+
+		}
 	}
 
 	@Override

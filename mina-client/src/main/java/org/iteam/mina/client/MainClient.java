@@ -1,6 +1,7 @@
 package org.iteam.mina.client;
 
 import java.net.InetSocketAddress;
+import java.util.Random;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.future.ConnectFuture;
@@ -41,19 +42,43 @@ public class MainClient {
 				JConstant.READ_BUFFER_SIZE);// 发送缓冲区10M
 		connector.getSessionConfig().setReceiveBufferSize(
 				JConstant.RECEIVE_BUFFER_SIZE);// 接收缓冲区10M
-		ConnectFuture cf = connector.connect(new InetSocketAddress(IP, PORT));
+		final ConnectFuture cf = connector.connect(new InetSocketAddress(IP,
+				PORT));
 		log.info("等待连接创建完成......");
 		cf.awaitUninterruptibly();// 等待连接创建完成
 		log.info("连接创建完成-->" + IP + ":" + PORT);
 		JMessageProtocalRequest req = new JMessageProtocalRequest();
 		req.setVersion(1111000);
-		req.setMethodCode(0x00100140);
+		req.setMethodCode(0x10100140);
 		req.setUuid(GUtils.UUID());
 		req.setContent("hello world!!!");
 		log.info("发送数据.....");
 		cf.getSession().write(req);
 		log.info("发送数据成功.....等待连接断开");
+		new Thread(new Runnable() {
 
+			@Override
+			public void run() {
+				Random random = new Random();
+				try {
+					int time = random.nextInt(20 * 1000);
+
+					JMessageProtocalRequest req = new JMessageProtocalRequest();
+					req.setVersion(1111000);
+					req.setMethodCode(0x10100140);
+					req.setUuid(GUtils.UUID());
+					req.setContent("hello world!!!" + time);
+					log.info("发送数据.....");
+					cf.getSession().write(req);
+					log.info("发送数据成功.....等待连接断开");
+					Thread.sleep(time);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}).start();
 		cf.getSession().getCloseFuture().awaitUninterruptibly();// 等待连接断开
 		connector.dispose();
 		log.info("连接断开");

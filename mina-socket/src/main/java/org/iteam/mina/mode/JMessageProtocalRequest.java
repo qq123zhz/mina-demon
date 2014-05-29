@@ -1,8 +1,7 @@
-package org.iteam.mina.protocal;
-
-import java.nio.charset.Charset;
+package org.iteam.mina.mode;
 
 import org.apache.commons.lang.StringUtils;
+import org.iteam.mina.utils.JConstant;
 
 /**
  * 消息协议-请求
@@ -74,7 +73,7 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 	public int getLength() {
 		int len = 0;
 		if (StringUtils.isNotBlank(content)) {
-			len = content.getBytes(Charset.forName("UTF-8")).length;
+			len = content.getBytes(JConstant.CHARSET).length;
 		}
 		return len;
 	}

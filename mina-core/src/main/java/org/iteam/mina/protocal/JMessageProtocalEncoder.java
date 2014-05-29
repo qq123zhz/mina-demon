@@ -37,6 +37,7 @@ public class JMessageProtocalEncoder extends ProtocolEncoderAdapter {
 			buf.putInt(mpReq.getVersion());
 			buf.putInt(mpReq.getLength());
 			buf.putInt(mpReq.getMethodCode());
+System.out.println( String.format("%1$#1x", mpReq.getMethodCode()));
 			if (StringUtils.isNotBlank(mpReq.getUuid())) {
 				int uuid_length = mpReq.getUuid().getBytes(charset).length;
 				buf.putInt(uuid_length);

@@ -31,6 +31,11 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 	 */
 	public void decode(IoSession session, IoBuffer buf,
 			ProtocolDecoderOutput out) throws Exception {
+		if (buf == null || buf.remaining() < 12) {
+			return;
+
+		}
+		System.out.println(buf.getString(charset.newDecoder()));
 		JMessageProtocal jMessageProtocal = null;
 		// 响应：消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
 		// 请求：消息协议版本[4]数据长度[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
@@ -43,13 +48,15 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 		// 取出协议体
 		byte[] bodyData = new byte[length];
 		// 获取协议类型
-		int type = methodCode & 0xf000000 >> 28;
+		int type = methodCode & 0xf0000000 >> 28;
 		String uuid = "";
 		// 是请求协议[解码UUID]
 		if (0x0 <= type && type <= 0x7) {
 			// 获取UUID长度
 			int uuid_length = buf.getInt();
-			uuid = buf.getString(uuid_length, charset.newDecoder());
+			if (uuid_length > 0) {
+				uuid = buf.getString(uuid_length, charset.newDecoder());
+			}
 		}
 		buf.get(bodyData);
 		// 为解析数据做准备
