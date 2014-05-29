@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * JMessageProtocal解码
  * 
- * @author Simple
+ * @author arts
  * 
  */
 public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
@@ -32,7 +32,8 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 	public void decode(IoSession session, IoBuffer buf,
 			ProtocolDecoderOutput out) throws Exception {
 		JMessageProtocal jMessageProtocal = null;
-		// 消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
+		// 响应：消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
+		// 请求：消息协议版本[4]数据长度[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
 		// 获取协议版本
 		int version = buf.getInt();
 		// 获取数据长度
@@ -43,7 +44,13 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 		byte[] bodyData = new byte[length];
 		// 获取协议类型
 		int type = methodCode & 0xf000000 >> 28;
-
+		String uuid = "";
+		// 是请求协议[解码UUID]
+		if (0x0 <= type && type <= 0x7) {
+			// 获取UUID长度
+			int uuid_length = buf.getInt();
+			uuid = buf.getString(uuid_length, charset.newDecoder());
+		}
 		buf.get(bodyData);
 		// 为解析数据做准备
 		// 检测协议
@@ -77,6 +84,7 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 				req.setMethodCode(methodCode);
 				req.setVersion(version);
 				req.setContent(content);
+				req.setUuid(uuid);
 				jMessageProtocal = req;
 
 			} else if (0x8 <= type && type <= 0xf) {

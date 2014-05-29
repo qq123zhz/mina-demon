@@ -14,6 +14,7 @@
 		<module>mina-core</module>
     <module>mina-server</module>
     <module>mina-client</module>
+    <module>mina-socket</module>
   </modules>
 	<build>
 		<plugins>

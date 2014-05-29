@@ -9,6 +9,7 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.iteam.mina.protocal.JMessageProtocalCodecFactory;
 import org.iteam.mina.protocal.JMessageProtocalRequest;
+import org.iteam.mina.utils.GUtils;
 import org.iteam.mina.utils.JConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class MainClient {
 		JMessageProtocalRequest req = new JMessageProtocalRequest();
 		req.setVersion(1111000);
 		req.setMethodCode(0x00100140);
+		req.setUuid(GUtils.UUID());
 		req.setContent("hello world!!!");
 		log.info("发送数据.....");
 		cf.getSession().write(req);

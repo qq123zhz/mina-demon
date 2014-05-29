@@ -10,10 +10,11 @@ import org.apache.commons.lang.StringUtils;
  *    int 		version：消息协议版本    
  *    int   	length：数据长度 
  *    int   	methodCode：功能函数【0x00000001】
+ *    String	uuid:用户使用唯一标识
  * 报体： 
  *    String  	content：数据内容
  * 报文格式：
- *  消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
+ *  消息协议版本[4]数据长度[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
  * 
  * 功能函数定义：
  *  1位：指令应答标志位 
@@ -66,6 +67,7 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 	private String content;// 请求内容
 	private int methodCode;// 功能函数
 	private int version;// 消息协议版本
+	private String uuid;// 用户使用唯一标识
 
 	public int getLength() {
 		int len = 0;
@@ -99,10 +101,18 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 		this.content = content;
 	}
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	@Override
 	public String toString() {
 		return "JMessageProtocalRequest [version=" + version + ", methodCode="
-				+ String.format("%1$#1x", methodCode) + ", getLength()="
-				+ getLength() + ", content=" + content + "]";
+				+ String.format("%1$#1x", methodCode) + ", uuid=" + uuid
+				+ ", getLength()=" + getLength() + ", content=" + content + "]";
 	}
 }
