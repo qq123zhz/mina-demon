@@ -27,6 +27,7 @@ public class MainClient {
 
 	private static final int PORT = JConstant.PORT;
 	private static final String IP = "192.168.12.31";
+	private static ConnectFuture cf = null;
 
 	public static void main(String[] args) {
 		NioSocketConnector connector = new NioSocketConnector();
@@ -42,13 +43,12 @@ public class MainClient {
 				JConstant.READ_BUFFER_SIZE);// 发送缓冲区10M
 		connector.getSessionConfig().setReceiveBufferSize(
 				JConstant.RECEIVE_BUFFER_SIZE);// 接收缓冲区10M
-		final ConnectFuture cf = connector.connect(new InetSocketAddress(IP,
-				PORT));
+		cf = connector.connect(new InetSocketAddress(IP, PORT));
 		log.info("等待连接创建完成......");
 		cf.awaitUninterruptibly();// 等待连接创建完成
 		log.info("连接创建完成-->" + IP + ":" + PORT);
 		JMessageProtocalRequest req = new JMessageProtocalRequest();
-		req.setVersion(1111000);
+		req.setVersion(0x1111000);
 		req.setMethodCode(0x10100140);
 		req.setUuid(GUtils.UUID());
 		req.setContent("hello world!!!");
@@ -62,16 +62,16 @@ public class MainClient {
 				Random random = new Random();
 				try {
 					int time = random.nextInt(20 * 1000);
+					Thread.sleep(time);
 
 					JMessageProtocalRequest req = new JMessageProtocalRequest();
-					req.setVersion(1111000);
+					req.setVersion(0x1111000);
 					req.setMethodCode(0x10100140);
 					req.setUuid(GUtils.UUID());
 					req.setContent("hello world!!!" + time);
 					log.info("发送数据.....");
 					cf.getSession().write(req);
 					log.info("发送数据成功.....等待连接断开");
-					Thread.sleep(time);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
