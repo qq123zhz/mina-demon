@@ -18,6 +18,5 @@
 
 	<root>
 		<appender-ref ref="stdout" />
-		<appender-ref ref="MongoDB" />
 	</root>
 </configuration>  

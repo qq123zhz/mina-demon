@@ -30,7 +30,8 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 	 */
 	public void decode(IoSession session, IoBuffer buf,
 			ProtocolDecoderOutput out) throws Exception {
-		if (buf.hasRemaining() && buf.prefixedDataAvailable(4)) {
+		if (session.isConnected() && buf.hasRemaining()
+				&& buf.prefixedDataAvailable(4)) {
 			// 响应：消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
 			// 请求：消息协议版本[4]数据长度[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
 			// 获取协议版本
@@ -67,7 +68,7 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 					body.flip();
 					request.setContent(body.getString(charset.newDecoder()));
 				}
-				session.write(request);
+				out.write(request);
 			}
 			// 响应协议
 			else if (0x8 <= type && type >= 0xf) {
@@ -85,7 +86,7 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 					body.flip();
 					response.setContent(body.getString(charset.newDecoder()));
 				}
-				session.write(response);
+				out.write(response);
 
 			} else {
 				log.error("未定义的协议类型");

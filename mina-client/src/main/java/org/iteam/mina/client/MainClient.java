@@ -25,7 +25,7 @@ public class MainClient {
 	private static Logger log = LoggerFactory.getLogger(MainClient.class);
 
 	private static final int PORT = JConstant.PORT;
-	private static final String IP = "192.168.12.72";
+	private static final String IP = "192.168.12.31";
 
 	// private static ConnectFuture cf = null;
 
