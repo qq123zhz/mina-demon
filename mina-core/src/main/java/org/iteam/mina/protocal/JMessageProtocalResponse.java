@@ -1,5 +1,7 @@
 package org.iteam.mina.protocal;
 
+import java.nio.charset.Charset;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -65,13 +67,18 @@ public class JMessageProtocalResponse extends JMessageProtocal {
 	private String content;// 响应内容
 	private int methodCode;// 功能函数
 	private int version;// 消息协议版本
+	private Charset charset;
 
 	public int getLength() {
 		int len = 0;
 		if (StringUtils.isNotBlank(content)) {
-			len = content.getBytes().length;
+			len = content.getBytes(charset).length;
 		}
 		return len;
+	}
+
+	public JMessageProtocalResponse(Charset charset) {
+		this.charset = charset;
 	}
 
 	public int getMethodCode() {

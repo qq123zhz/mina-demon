@@ -70,13 +70,26 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 	private int methodCode;// 功能函数
 	private int version;// 消息协议版本
 	private String uuid;// 用户使用唯一标识
+	private Charset charset;
 
 	public int getLength() {
 		int len = 0;
 		if (StringUtils.isNotBlank(content)) {
-			len = content.getBytes(Charset.forName("UTF-8")).length;
+			len = content.getBytes(charset).length;
 		}
 		return len;
+	}
+
+	public int getUUIDLength() {
+		int len = 0;
+		if (StringUtils.isNotBlank(uuid)) {
+			len = uuid.getBytes(charset).length;
+		}
+		return len;
+	}
+
+	public JMessageProtocalRequest(Charset charset) {
+		this.charset = charset;
 	}
 
 	public int getMethodCode() {

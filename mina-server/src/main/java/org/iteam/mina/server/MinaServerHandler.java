@@ -9,6 +9,7 @@ import org.iteam.mina.pool.SessionPool;
 import org.iteam.mina.protocal.JMessageProtocalRequest;
 import org.iteam.mina.protocal.JMessageProtocalResponse;
 import org.iteam.mina.utils.EUtils;
+import org.iteam.mina.utils.JConstant;
 import org.iteam.mina.utils.RedisUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 				message.toString()));
 		if (message instanceof JMessageProtocalRequest) {
 			JMessageProtocalRequest request = (JMessageProtocalRequest) message;
-			JMessageProtocalResponse response = new JMessageProtocalResponse();
+			JMessageProtocalResponse response = new JMessageProtocalResponse(JConstant.CHARSET);
 			response.setContent(request.getContent());
 			response.setMethodCode(request.getMethodCode());
 			response.setResultCode(0x11);
