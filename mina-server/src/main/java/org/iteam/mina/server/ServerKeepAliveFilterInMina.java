@@ -89,8 +89,9 @@ class KeepAliveMessageFactoryImpl implements KeepAliveMessageFactory {
 
 		boolean result = (realMessage.get() == int_req);
 		realMessage.rewind();
-		logger.debug("心跳-isRequest,sessionid:" + session.getId() + ",result:"
-				+ result);
+		if (result)
+			logger.debug("心跳-isRequest,sessionid:" + session.getId()
+					+ ",result:" + result);
 		return result;
 	}
 
@@ -103,8 +104,9 @@ class KeepAliveMessageFactoryImpl implements KeepAliveMessageFactory {
 
 		boolean result = (realMessage.get() == int_rep);
 		realMessage.rewind();
-		logger.debug("心跳-isResponse,sessionid:" + session.getId() + ",result:"
-				+ result);
+		if (result)
+			logger.debug("心跳-isResponse,sessionid:" + session.getId()
+					+ ",result:" + result);
 		if (result) {
 			Jedis jedis = RedisUtil.getResource();
 			jedis.expire(String.valueOf("session_id:" + session.getId()), 30);

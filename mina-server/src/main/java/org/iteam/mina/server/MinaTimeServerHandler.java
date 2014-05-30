@@ -22,9 +22,9 @@ import redis.clients.jedis.Jedis;
  * @author arts
  * 
  */
-public class MinaServerHandler extends IoHandlerAdapter {
+public class MinaTimeServerHandler extends IoHandlerAdapter {
 
-	private Logger log = LoggerFactory.getLogger(MinaServerHandler.class);
+	private Logger log = LoggerFactory.getLogger(MinaTimeServerHandler.class);
 
 	@Override
 	public void exceptionCaught(IoSession session, Throwable cause)
@@ -35,6 +35,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		Jedis jedis = RedisUtil.getResource();
 		jedis.del(String.valueOf("session_id:" + session.getId()));
 		RedisUtil.returnResource(jedis);
+
+		SessionPool.idSessions.remove(session.getId());
 	}
 
 	@Override
@@ -44,7 +46,8 @@ public class MinaServerHandler extends IoHandlerAdapter {
 				session.getRemoteAddress(), message.toString()));
 		if (message instanceof JMessageProtocalRequest) {
 			JMessageProtocalRequest request = (JMessageProtocalRequest) message;
-			JMessageProtocalResponse response = new JMessageProtocalResponse(JConstant.CHARSET);
+			JMessageProtocalResponse response = new JMessageProtocalResponse(
+					JConstant.CHARSET);
 			response.setContent(request.getContent());
 			response.setMethodCode(request.getMethodCode());
 			response.setResultCode(0x11);
@@ -85,7 +88,7 @@ public class MinaServerHandler extends IoHandlerAdapter {
 		jedis.setex(String.valueOf("session_id:" + session.getId()), 30,
 				session.getRemoteAddress().toString());
 		RedisUtil.returnResource(jedis);
-
+		SessionPool.idSessions.put(session.getId(), session);
 		log.debug(String.format("Client[%s]与Server建立连接!",
 				session.getRemoteAddress()));
 	}

@@ -6,6 +6,8 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolEncoderAdapter;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JMessageProtocal编码
@@ -14,6 +16,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
  * 
  */
 public class JMessageProtocalEncoder extends ProtocolEncoderAdapter {
+	private Logger log = LoggerFactory.getLogger(JMessageProtocalEncoder.class);
 
 	private Charset charset;
 
@@ -34,11 +37,10 @@ public class JMessageProtocalEncoder extends ProtocolEncoderAdapter {
 			// object --> AbsMP
 			if (object instanceof JMessageProtocalRequest) {// 请求协议
 				JMessageProtocalRequest mpReq = (JMessageProtocalRequest) object;
-				buf.putInt(mpReq.getVersion());
 				buf.putInt(mpReq.getLength());
+				buf.putInt(mpReq.getVersion());
 				buf.putInt(mpReq.getMethodCode());
-				System.out.println(String.format("%1$#1x",
-						mpReq.getMethodCode()));
+				log.debug(String.format("%1$#1x", mpReq.getMethodCode()));
 				int uuid_length = mpReq.getUUIDLength();
 				buf.putInt(uuid_length);
 				if (uuid_length > 0) {
@@ -47,11 +49,17 @@ public class JMessageProtocalEncoder extends ProtocolEncoderAdapter {
 				buf.putString(mpReq.getContent(), charset.newEncoder());
 			} else if (object instanceof JMessageProtocalResponse) {// 响应协议
 				JMessageProtocalResponse mpRes = (JMessageProtocalResponse) object;
-				buf.putInt(mpRes.getVersion());
 				buf.putInt(mpRes.getLength());
-				int methodCode = mpRes.getMethodCode() & 0xffffff00
+				buf.putInt(mpRes.getVersion());
+
+				log.debug("methodCode-->:"
+						+ String.format("%1$#1x", mpRes.getMethodCode()));
+				int methodCode = (mpRes.getMethodCode() & 0xffffff00)
 						+ 0x80000000 + mpRes.getResultCode();
 				buf.putInt(methodCode);
+
+				log.debug("methodCode-->:"
+						+ String.format("%1$#1x", methodCode));
 				buf.putString(mpRes.getContent(), charset.newEncoder());
 			}
 			buf.flip();

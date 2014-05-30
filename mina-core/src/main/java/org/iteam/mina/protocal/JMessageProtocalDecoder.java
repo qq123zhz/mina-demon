@@ -32,27 +32,30 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 			ProtocolDecoderOutput out) throws Exception {
 		if (session.isConnected() && buf.hasRemaining()
 				&& buf.prefixedDataAvailable(4)) {
-			// 响应：消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
-			// 请求：消息协议版本[4]数据长度[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
-			// 获取协议版本
-			int version = buf.getInt();
-			System.out.println("version:" + String.format("%1$#1x", version));
+			// 响应：数据长度[4]消息协议版本[4]功能函数[4] 数据内容[根据数据长度而定]
+			// 请求：数据长度[4]消息协议版本[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
 			// 获取数据长度
 			int length = buf.getInt();
-			System.out.println("length:" + length);
+			log.debug("RemoteAddress:" + session.getRemoteAddress());
+			log.debug("length:" + length);
+			// 获取协议版本
+			int version = buf.getInt();
+			log.debug("version:" + String.format("%1$#1x", version));
 			// 获取功能函数
 			int methodCode = buf.getInt();
-			System.out.println("methodCode:"
+			log.debug("methodCode:"
 					+ String.format("%1$#1x", methodCode));
 			// 获取协议类型
-			int type = methodCode & 0xf0000000 >> 28;
+			int type =( methodCode & 0xf0000000) >>> 28;
+			log.debug("type:" + type);
+
 			// 请求协议
-			if (0x0 <= type && type >= 0x7) {
+			if (0x0 <= type && type <= 0x7) {
 				// 用户UUID
 				int uuid_length = buf.getInt();
 				String uuid = "";
 				if (uuid_length > 0) {
-					buf.getString(uuid_length, charset.newDecoder());
+					uuid=buf.getString(uuid_length, charset.newDecoder());
 				}
 
 				JMessageProtocalRequest request = new JMessageProtocalRequest(
@@ -60,6 +63,7 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 				request.setVersion(version);
 				request.setMethodCode(methodCode);
 				request.setUuid(uuid);
+				length = length - 4 * 3 - uuid_length;
 				if (length > 0) {
 					byte[] data = new byte[length];
 					buf.get(data);
@@ -71,13 +75,14 @@ public class JMessageProtocalDecoder extends ProtocolDecoderAdapter {
 				out.write(request);
 			}
 			// 响应协议
-			else if (0x8 <= type && type >= 0xf) {
+			else if (0x8 <= type && type <= 0xf) {
 				JMessageProtocalResponse response = new JMessageProtocalResponse(
 						charset);
 				response.setVersion(version);
 				int resultCode = methodCode & 0xff;
 				response.setResultCode(resultCode);
 				response.setMethodCode(methodCode);
+				length = length - 4 * 2;
 				if (length > 0) {
 					byte[] data = new byte[length];
 					buf.get(data);

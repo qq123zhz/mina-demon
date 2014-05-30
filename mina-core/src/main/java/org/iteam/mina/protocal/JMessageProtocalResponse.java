@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
  * 报体： 
  *    String  	content：数据内容
  * 报文格式：
- *  消息协议版本[4]数据长度[4]功能函数[4] 数据内容[根据数据长度而定]
+ *  数据长度[4]消息协议版本[4]功能函数[4]数据内容[根据数据长度而定]
  * 
  * 功能函数定义：
  *  1位：指令应答标志位 
@@ -74,6 +74,7 @@ public class JMessageProtocalResponse extends JMessageProtocal {
 		if (StringUtils.isNotBlank(content)) {
 			len = content.getBytes(charset).length;
 		}
+		len += 4 * 2;
 		return len;
 	}
 
@@ -107,7 +108,8 @@ public class JMessageProtocalResponse extends JMessageProtocal {
 
 	@Override
 	public String toString() {
-		return "JMessageProtocalResponse [version=" + version + ", methodCode="
+		return "JMessageProtocalResponse [version="
+				+ String.format("%1$#1x", version) + ", methodCode="
 				+ String.format("%1$#1x", methodCode) + ", resultCode="
 				+ resultCode + ", getLength()=" + getLength() + ", content="
 				+ content + "]";

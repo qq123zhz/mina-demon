@@ -1,7 +1,8 @@
 package org.iteam.mina.mode;
 
+import java.nio.charset.Charset;
+
 import org.apache.commons.lang.StringUtils;
-import org.iteam.mina.utils.JConstant;
 
 /**
  * 消息协议-请求
@@ -15,7 +16,7 @@ import org.iteam.mina.utils.JConstant;
  * 报体： 
  *    String  	content：数据内容
  * 报文格式：
- *  消息协议版本[4]数据长度[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
+ *  数据长度[4]消息协议版本[4]功能函数[4]uuid长度[4]uuid[根据uuid长度而定]数据内容[根据数据长度而定]
  * 
  * 功能函数定义：
  *  1位：指令应答标志位 
@@ -69,13 +70,28 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 	private int methodCode;// 功能函数
 	private int version;// 消息协议版本
 	private String uuid;// 用户使用唯一标识
+	private Charset charset;
 
 	public int getLength() {
 		int len = 0;
 		if (StringUtils.isNotBlank(content)) {
-			len = content.getBytes(JConstant.CHARSET).length;
+			len = content.getBytes(charset).length;
+		}
+		len += getUUIDLength();
+		len += 4 * 3;
+		return len;
+	}
+
+	public int getUUIDLength() {
+		int len = 0;
+		if (StringUtils.isNotBlank(uuid)) {
+			len = uuid.getBytes(charset).length;
 		}
 		return len;
+	}
+
+	public JMessageProtocalRequest(Charset charset) {
+		this.charset = charset;
 	}
 
 	public int getMethodCode() {
@@ -112,7 +128,7 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 
 	@Override
 	public String toString() {
-		return "JMessageProtocalRequest [version=" + version + ", methodCode="
+		return "JMessageProtocalRequest [version=" + String.format("%1$#1x", version)  + ", methodCode="
 				+ String.format("%1$#1x", methodCode) + ", uuid=" + uuid
 				+ ", getLength()=" + getLength() + ", content=" + content + "]";
 	}
