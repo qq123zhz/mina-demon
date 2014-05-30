@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.charset.CharacterCodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,10 +57,8 @@ public class SocketClient {
 			sendMsg.start();
 			log.debug("启动数据发送线程");
 
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error(EUtils.getExceptionStack(e));
 		} finally {
 
 		}
@@ -104,15 +100,9 @@ public class SocketClient {
 					send(buf);
 					log.debug("发送消息：" + mpReq.toString());
 					Thread.sleep(time);
-				} catch (CharacterCodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (Exception e) {
+					log.error(EUtils.getExceptionStack(e));
+
 				}
 			} while (true);
 		}
@@ -124,8 +114,8 @@ public class SocketClient {
 			try {
 				send(KAMSG_REQ);
 				log.debug("心跳发送------>：" + int_req);
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				log.error(EUtils.getExceptionStack(e));
 			}
 		}
 	};
@@ -172,11 +162,12 @@ public class SocketClient {
 						temp_all.flip();
 						body.flip();
 						ioBuffers.add(temp_all);
-						log.debug("接收服务器消息：" + DecodeUtils.decode(temp_all).toString());
+						log.debug("接收服务器消息："
+								+ DecodeUtils.decode(temp_all).toString());
 
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.error(EUtils.getExceptionStack(e));
 					break;
 				}
 			} while (true);

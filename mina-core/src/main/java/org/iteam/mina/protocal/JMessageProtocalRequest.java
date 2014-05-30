@@ -94,6 +94,10 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 		this.charset = charset;
 	}
 
+	public JMessageProtocalRequest() {
+		this.charset = Charset.forName("UTF-8");
+	}
+
 	public int getMethodCode() {
 		return methodCode;
 	}
@@ -128,7 +132,8 @@ public class JMessageProtocalRequest extends JMessageProtocal {
 
 	@Override
 	public String toString() {
-		return "JMessageProtocalRequest [version=" + String.format("%1$#1x", version) + ", methodCode="
+		return "JMessageProtocalRequest [version="
+				+ String.format("%1$#1x", version) + ", methodCode="
 				+ String.format("%1$#1x", methodCode) + ", uuid=" + uuid
 				+ ", getLength()=" + getLength() + ", content=" + content + "]";
 	}

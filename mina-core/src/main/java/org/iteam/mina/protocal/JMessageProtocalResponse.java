@@ -82,6 +82,10 @@ public class JMessageProtocalResponse extends JMessageProtocal {
 		this.charset = charset;
 	}
 
+	public JMessageProtocalResponse() {
+		this.charset = Charset.forName("UTF-8");
+	}
+
 	public int getMethodCode() {
 		return methodCode;
 	}

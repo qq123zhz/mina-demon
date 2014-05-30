@@ -12,9 +12,12 @@
 	</properties>
 	<modules>
 		<module>mina-core</module>
-    <module>mina-server</module>
-    <module>mina-client</module>
-    <module>mina-socket</module>
+		<module>mina-server</module>
+		<module>mina-client</module>
+		<module>mina-socket</module>
+    <module>mina-im-server</module>
+    <module>mina-im-client</module>
+    <module>mina-im-core</module>
   </modules>
 	<build>
 		<plugins>

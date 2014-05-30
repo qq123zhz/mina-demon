@@ -7,4 +7,8 @@ public class DateUtils {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		return sdf.format(time);
 	}
+
+	public static String toDateString() {
+		return toDateString(System.currentTimeMillis());
+	}
 }
