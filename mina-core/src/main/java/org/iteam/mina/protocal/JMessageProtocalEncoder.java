@@ -61,6 +61,15 @@ public class JMessageProtocalEncoder extends ProtocolEncoderAdapter {
 				log.debug("methodCode-->:"
 						+ String.format("%1$#1x", methodCode));
 				buf.putString(mpRes.getContent(), charset.newEncoder());
+			} else if (object instanceof IoBuffer) {
+				IoBuffer rb = (IoBuffer) object;
+				IoBuffer wb = IoBuffer.allocate(rb.remaining())
+						.setAutoExpand(true).setAutoShrink(true);
+				rb.mark();
+				wb.put(rb);
+				wb.shrink();
+			} else {
+				throw new Exception("未定义的协议数据类型");
 			}
 			buf.flip();
 			out.write(buf);
